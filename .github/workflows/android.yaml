@@ -20,13 +20,13 @@ jobs:
         node-version: latest
 
     - name: Install NPM dependencies
-      run: cd App && npm install
+      run: cd App && npm ci
 
-    - name: Save files on cache
-      uses: actions/cache@v2
+    - name: Set dependences cache
+      uses: actions/cache@v3
       with:
-        path: ${{ github.workspace }}
-        key: ${{ runner.os }}-repo-${{ github.sha }}
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
   build:
     name: Build project
@@ -34,12 +34,19 @@ jobs:
     needs: setup
 
     steps:
-    - name: Restore cache
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: latest
+
+    - name: Restaurar caché
       uses: actions/cache@v2
       with:
-        path: ${{ github.workspace }}
-        key: ${{ runner.os }}-repo-${{ github.sha }}
-        restore-keys: ${{ runner.os }}-repo-
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
     - name: Build code
       run: cd App && npm run android:build
