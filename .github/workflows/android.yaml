@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build project
+  setup:
+    name: Set up
     runs-on: ubuntu-latest
 
     steps:
@@ -21,6 +21,25 @@ jobs:
 
     - name: Install NPM dependencies
       run: cd App && npm install
+
+    - name: Save files on cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}
+        key: ${{ runner.os }}-repo-${{ github.sha }}
+
+  build:
+    name: Build project
+    runs-on: ubuntu-latest
+    needs: setup
+
+    steps:
+    - name: Restore cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}
+        key: ${{ runner.os }}-repo-${{ github.sha }}
+        restore-keys: ${{ runner.os }}-repo-
 
     - name: Build code
       run: cd App && npm run android:build
