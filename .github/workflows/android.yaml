@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'App/**'
 
 jobs:
   build:
@@ -21,11 +19,29 @@ jobs:
         node-version: 'lts'
 
     - name: Install NPM dependencies
-      run: |
-        cd App
-        npm install
+      run: cd App && npm install
 
     - name: Build project
-      run: |
-        cd App/android
-        ./gradlew assembleRelease
+      run: cd App && npm run android:build
+
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload release APK
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./App/android/app/release/app-release.apk
+        asset_name: app-release.apk
+        asset_content_type: application/vnd.android.package-archive
