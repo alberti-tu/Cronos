@@ -42,11 +42,8 @@ jobs:
       with:
         node-version: latest
 
-    - name: Restaurar caché
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**App/package-lock.json') }}
+    - name: Install NPM dependencies
+      run: cd App && npm ci
 
     - name: Build code
       run: cd App && npm run android:build
