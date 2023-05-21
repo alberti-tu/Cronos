@@ -41,8 +41,8 @@ jobs:
         name: android
 
     - name: Create release
-        uses: actions/create-release@v1
         id: release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
