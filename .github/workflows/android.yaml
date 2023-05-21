@@ -18,18 +18,20 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: latest
+        cache: 'npm'
 
     - name: Install NPM dependencies
       run: cd App && npm ci
 
-    - name: Set dependences cache
+    - name: Cache NPM dependencies
       uses: actions/cache@v3
+      id: cache-primes
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**App/package-lock.json') }}
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('App/package-lock.json') 
 
   build:
-    name: Build project
+    name: Build Android
     runs-on: ubuntu-latest
     needs: setup
 
@@ -41,9 +43,13 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: latest
+        cache: 'npm'
 
-    - name: Install NPM dependencies
-      run: cd App && npm ci
+    - name: Cache NPM dependencies
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('App/ppackage-lock.json')
 
     - name: Build code
       run: cd App && npm run android:build
