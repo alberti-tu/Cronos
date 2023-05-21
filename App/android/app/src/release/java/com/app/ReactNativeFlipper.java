@@ -1,4 +1,4 @@
-package com.app;
+package com.alberti_tu.cronos;
 
 import android.content.Context;
 import com.facebook.react.ReactInstanceManager;

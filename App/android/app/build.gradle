@@ -89,9 +89,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.app"
+    namespace "com.alberti_tu.cronos"
     defaultConfig {
-        applicationId "com.app"
+        applicationId "com.alberti_tu.cronos"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
