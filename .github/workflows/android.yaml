@@ -26,7 +26,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**App/package-lock.json') }}
 
   build:
     name: Build project
@@ -46,7 +46,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**App/package-lock.json') }}
 
     - name: Build code
       run: cd App && npm run android:build
