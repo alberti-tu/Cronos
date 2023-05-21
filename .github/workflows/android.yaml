@@ -1,0 +1,31 @@
+name: Deploy Android
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'App/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 'lts'
+
+    - name: Install NPM dependencies
+      run: |
+        cd App
+        npm install
+
+    - name: Build project
+      run: |
+        cd App/android
+        ./gradlew assembleRelease
