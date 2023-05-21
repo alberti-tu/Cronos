@@ -16,7 +16,7 @@ jobs:
     - name: Install Node.js
       uses: actions/setup-node@v2
       with:
-        check-latest: true
+        node-version: 18
 
     - name: Install NPM dependencies
       run: cd App && npm install
@@ -25,7 +25,17 @@ jobs:
       run: cd App && npm run android:build
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
         name: android
         path: App/android/app/build/outputs/apk/release/app-release.apk
+  
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: android
+  
