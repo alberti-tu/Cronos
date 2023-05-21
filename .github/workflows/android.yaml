@@ -16,7 +16,7 @@ jobs:
     - name: Install Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: current
+        node-version: lts
 
     - name: Install NPM dependencies
       run: cd App && npm install
