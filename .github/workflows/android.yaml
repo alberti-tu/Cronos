@@ -27,11 +27,17 @@ jobs:
       with:
         node-version: latest
 
-    - name: Current version
+    - name: Current package version
+      id: package_version
+      run: |
+        cd ${{ env.path }}
+        echo "::set-output name=value::$(npm pkg get version)"
+
+    - name: Current tag version
       uses: "WyriHaximus/github-action-get-previous-tag@v1"
       id: current_version
       with:
-        fallback: $(npm pkg get version)
+        fallback: ${{ steps.package_version.outputs.value }}
 
     - name: Next version'
       id: next_version
