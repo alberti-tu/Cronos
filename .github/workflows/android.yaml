@@ -33,9 +33,11 @@ jobs:
         path: ${{ env.path }}/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
 
-  version:
+  settings:
     name: App version
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.app.outputs.value }}
 
     steps:
     - name: Get last version
@@ -47,10 +49,7 @@ jobs:
 
     - name: Set new version
       id: app
-      run: run: echo "::set-output name=value::${{ env.major }}.${{ env.minor }}.${{ steps.version.outputs.patch-version }}"
-
-    - name: Show version
-      run: echo "${{ steps.app.outputs.value }}"
+      run: echo "value=${{ env.major }}.${{ env.minor }}.${{ steps.version.outputs.patch-version }}" >> "$GITHUB_OUTPUT"
 
   build:
     name: Build Android
@@ -73,7 +72,7 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
 
     - name: Set app version
-      run: cd ${{ env.path }} && npm pkg set version=1.0.0
+      run: cd ${{ env.path }} && npm pkg set version=${{ needs.settings.outputs.version }}
     - name: Build code
       run: cd ${{ env.path }} && npm run android:build
 
@@ -89,8 +88,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        release_name: Release test
-        tag_name: test
+        release_name: Release ${{ needs.settings.outputs.version }}
+        tag_name: ${{ needs.settings.outputs.version }}
         draft: false
         prerelease: false
 
