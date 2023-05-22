@@ -40,6 +40,9 @@ jobs:
       version: ${{ steps.app.outputs.value }}
 
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
     - name: Get last version
       uses: reecetech/version-increment@2023.4.1
       id: version
