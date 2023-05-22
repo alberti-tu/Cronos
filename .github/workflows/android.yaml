@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  path: App
+
 jobs:
   setup:
     name: Set up
@@ -20,14 +23,14 @@ jobs:
         node-version: latest
 
     - name: Install NPM dependencies
-      run: cd App && npm ci
+      run: cd ${{ env.path }} && npm ci
 
     - name: Cache NPM dependencies
       uses: actions/cache@v3
       id: cache-primes
       with:
-        path: App/node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('App/package-lock.json') }}
+        path: ${{ env.path }}/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
 
   build:
     name: Build Android
@@ -46,17 +49,17 @@ jobs:
     - name: Cache NPM dependencies
       uses: actions/cache@v3
       with:
-        path: App/node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('App/package-lock.json') }}
+        path: ${{ env.path }}/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
 
     - name: Build code
-      run: cd App && npm run android:build
+      run: cd ${{ env.path }} && npm run android:build
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: android
-        path: App/android/app/build/outputs/apk/release/app-release.apk
+        path: ${{ env.path }}/android/app/build/outputs/apk/release/app-release.apk
 
     - name: Create release
       uses: actions/create-release@v1
@@ -75,6 +78,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.release.outputs.upload_url }}
-        asset_path: App/android/app/build/outputs/apk/release/app-release.apk
+        asset_path: ${{ env.path }}/android/app/build/outputs/apk/release/app-release.apk
         asset_name: android.apk
         asset_content_type: octet-stream
