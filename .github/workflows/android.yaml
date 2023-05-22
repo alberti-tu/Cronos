@@ -7,8 +7,6 @@ on:
 
 env:
   path: App
-  major: 0
-  minor: 0
 
 jobs:
   settings:
@@ -31,17 +29,8 @@ jobs:
       id: package_version
       run: echo "::set-output name=value::$(cd ${{ env.path }} && npm pkg get version)"
 
-    - name: Auto Increment Semver Action
-      uses: MCKanpolat/auto-semver-action@v1
-      id: versioning
-      with:
-        releaseType: patch 
-        incrementPerCommit: false
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Set new version
-      id: app
-      run: echo "value=${{ steps.versioning.outputs.version }}" >> "$GITHUB_OUTPUT"
+    - name: Set version
+      run: echo "version=${{ steps.package_version.outputs.value }}" >> $GITHUB_ENV
 
   setup:
     name: Set up
