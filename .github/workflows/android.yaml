@@ -8,31 +8,10 @@ on:
 
 env:
   path: App
-  major: 1
+  major: 0
   minor: 0
 
 jobs:
-  settings:
-    name: App version
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.app.outputs.value }}
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Get last version
-      uses: reecetech/version-increment@2023.4.1
-      id: version
-      with:
-        scheme: semver
-        increment: patch
-
-    - name: Set new version
-      id: app
-      run: echo "value=${{ env.major }}.${{ env.minor }}.${{ steps.version.outputs.patch-version }}" >> "$GITHUB_OUTPUT"
-
   setup:
     name: Set up
     runs-on: ubuntu-latest
@@ -55,7 +34,29 @@ jobs:
         path: ${{ env.path }}/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
 
-  build:
+  settings:
+    name: App version
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.version.outputs.patch-version }}
+      version: ${{ steps.app.outputs.value }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Get last version
+      uses: reecetech/version-increment@2023.4.1
+      id: version
+      with:
+        scheme: semver
+        increment: patch
+
+    - name: Set new version
+      id: app
+      run: echo "value=${{ env.major }}.${{ env.minor }}.${{ steps.version.outputs.patch-version }}" >> "$GITHUB_OUTPUT"
+
+  android:
     name: Build Android
     runs-on: ubuntu-latest
     needs: [settings, setup]
@@ -79,7 +80,7 @@ jobs:
       run: cd ${{ env.path }} && npm pkg set version=${{ needs.settings.outputs.version }}
 
     - name: Build code
-      run: cd ${{ env.path }} && npm run android:build
+      run: cd ${{ env.path }}/android && ./gradlew assembleRelease -PversionCode=${{ needs.settings.outputs.code }} -PversionName=${{ needs.settings.outputs.version }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
@@ -90,7 +91,7 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: [settings, build]
+    needs: [settings, android]
 
     steps:
     - name: Download artifact
