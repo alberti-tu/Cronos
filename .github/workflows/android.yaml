@@ -46,7 +46,11 @@ jobs:
         increment: patch
 
     - name: Set new version
+      id: app
       run: run: echo "::set-output name=value::${{ env.major }}.${{ env.minor }}.${{ steps.version.outputs.patch-version }}"
+
+    - name: Show version
+      run: echo "${{ steps.app.outputs.value }}"
 
   build:
     name: Build Android
@@ -69,8 +73,7 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
 
     - name: Set app version
-      run: cd ${{ env.path }} && npm pkg set version=${{ needs.version.outputs.value }}
-
+      run: cd ${{ env.path }} && npm pkg set version=1.0.0
     - name: Build code
       run: cd ${{ env.path }} && npm run android:build
 
@@ -86,8 +89,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        release_name: Release ${{ needs.version.outputs.value }}
-        tag_name: ${{ needs.version.outputs.value }}
+        release_name: Release test
+        tag_name: test
         draft: false
         prerelease: false
 
