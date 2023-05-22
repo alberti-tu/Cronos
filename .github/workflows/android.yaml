@@ -1,4 +1,4 @@
-name: Deploy application3
+name: Deploy application
 
 on:
   push:
@@ -59,7 +59,7 @@ jobs:
         increment: patch
 
     - name: Set app version
-      run: cd ${{ env.path }} && npm pkg set version={{ steps.version.outputs.version }}
+      run: cd ${{ env.path }} && npm pkg set version=${{ steps.version.outputs.version }}
 
     - name: Build code
       run: cd ${{ env.path }} && npm run android:build
