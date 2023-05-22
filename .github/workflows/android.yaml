@@ -1,4 +1,4 @@
-name: Deploy Android
+name: 1.1.${{ Rev:.r }}
 
 on:
   push:
@@ -30,6 +30,15 @@ jobs:
       with:
         path: ${{ env.path }}/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
+
+  version:
+    name: App version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Asignar versión de la aplicación a variable
+        id: asignar-version
+        run: echo "${{ github.workflow }}"
 
   build:
     name: Build Android
