@@ -29,25 +29,11 @@ jobs:
 
     - name: Current package version
       id: package_version
-      run: |
-        value = cd ${{ env.path }} && npm pkg get version
-        echo "value={value}" >> $GITHUB_OUTPUT
-
-    - name: Current tag version
-      uses: "WyriHaximus/github-action-get-previous-tag@v1"
-      id: current_version
-      with:
-        fallback: ${{ steps.package_version.outputs.value }}
-
-    - name: Next version'
-      id: next_version
-      uses: "WyriHaximus/github-action-next-semvers@v1"
-      with:
-        version: ${{ steps.current_version.outputs.tag }}
+      run: echo "value=cd ${{ env.path }} && npm pkg get version" >> $GITHUB_ENV
 
     - name: Set new version
       id: app
-      run: echo "value=${{ steps.next_version.outputs.patch }}" >> "$GITHUB_OUTPUT"
+      run: echo "value=${{ steps.package_version.outputs.value }}" >> "$GITHUB_OUTPUT"
 
   setup:
     name: Set up
