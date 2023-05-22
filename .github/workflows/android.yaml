@@ -13,8 +13,8 @@ jobs:
     name: App version
     runs-on: ubuntu-latest
     outputs:
-      code: ${{ steps.app_version.outputs.value }}
-      version: ${{ steps.app_code.outputs.value }}
+      code: ${{ steps.app_code.outputs.value }}
+      version: ${{ steps.app_version.outputs.value }}
 
     steps:
     - name: Checkout repository
@@ -71,7 +71,8 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
 
     - name: Set app version
-      run: cd ${{ env.path }} && npm pkg set version=${{ needs.settings.outputs.version }}
+      run: echo ${{ needs.settings.outputs.version }}
+      #run: cd ${{ env.path }} && npm pkg set version=${{ needs.settings.outputs.version }}
 
     - name: Build code
       run: cd ${{ env.path }}/android && ./gradlew assembleRelease -PversionCode=${{ needs.settings.outputs.code }} -PversionName=${{ needs.settings.outputs.version }}
