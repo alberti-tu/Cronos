@@ -30,6 +30,7 @@ jobs:
       run: echo "::set-output name=value::$(cd ${{ env.path }} && npm pkg get version)"
 
     - name: Set version
+      id: app
       run: echo "version=${{ steps.package_version.outputs.value }}" >> $GITHUB_ENV
 
   setup:
