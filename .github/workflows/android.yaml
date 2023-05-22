@@ -90,7 +90,7 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: build
+    needs: [settings, build]
 
     steps:
     - name: Download artifact
@@ -105,7 +105,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         release_name: Release ${{ needs.settings.outputs.version }}
-        tag_name: v${{ needs.settings.outputs.version }}
+        tag_name: ${{ needs.settings.outputs.version }}
         draft: false
         prerelease: false
 
