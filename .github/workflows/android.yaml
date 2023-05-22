@@ -1,4 +1,4 @@
-name: 1.0.${{ github.run_attempt }}
+name: Deploy application
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Asignar versión de la aplicación a variable
         id: asignar-version
-        run: echo "${{ github.workflow }}"
+        run: echo "1.0.${{ github.run_attempt }}"
 
   build:
     name: Build Android
