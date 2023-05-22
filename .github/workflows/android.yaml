@@ -27,7 +27,7 @@ jobs:
       id: cache-primes
       with:
         path: node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('App/package-lock.json') }}
 
   build:
     name: Build Android
@@ -42,13 +42,12 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: latest
-        cache: 'npm'
 
     - name: Cache NPM dependencies
       uses: actions/cache@v3
       with:
         path: node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('App/package-lock.json') }}
 
     - name: Build code
       run: cd App && npm run android:build
