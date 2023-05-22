@@ -30,8 +30,8 @@ jobs:
     - name: Current package version
       id: package_version
       run: |
-        cd ${{ env.path }}
-        echo "::set-output name=value::$(npm pkg get version)"
+        value = cd ${{ env.path }} && npm pkg get version
+        echo "value={value}" >> $GITHUB_OUTPUT
 
     - name: Current tag version
       uses: "WyriHaximus/github-action-get-previous-tag@v1"
