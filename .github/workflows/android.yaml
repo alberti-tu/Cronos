@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 env:
   path: App
@@ -12,6 +11,38 @@ env:
   minor: 0
 
 jobs:
+  settings:
+    name: App version
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.version.outputs.patch-version }}
+      version: ${{ steps.app.outputs.value }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: latest
+
+    - name: Current version
+      uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      id: current_version
+      with:
+        fallback: ${{ npm pkg get version }}
+
+    - name: Next version'
+      id: next_version
+      uses: "WyriHaximus/github-action-next-semvers@v1"
+      with:
+        version: ${{ steps.current_version.outputs.tag }}
+
+    - name: Set new version
+      id: app
+      run: echo "value=${{ steps.next_version.outputs.patch }}" >> "$GITHUB_OUTPUT"
+
   setup:
     name: Set up
     runs-on: ubuntu-latest
@@ -33,28 +64,6 @@ jobs:
       with:
         path: ${{ env.path }}/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
-
-  settings:
-    name: App version
-    runs-on: ubuntu-latest
-    outputs:
-      code: ${{ steps.version.outputs.patch-version }}
-      version: ${{ steps.app.outputs.value }}
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Get last version
-      uses: reecetech/version-increment@2023.4.1
-      id: version
-      with:
-        scheme: semver
-        increment: patch
-
-    - name: Set new version
-      id: app
-      run: echo "value=${{ env.major }}.${{ env.minor }}.${{ steps.version.outputs.patch-version }}" >> "$GITHUB_OUTPUT"
 
   android:
     name: Build Android
