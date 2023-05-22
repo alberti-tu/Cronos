@@ -7,6 +7,8 @@ on:
 
 env:
   path: App
+  major: 1
+  minor: 0
 
 jobs:
   setup:
@@ -31,10 +33,33 @@ jobs:
         path: ${{ env.path }}/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
 
+  version:
+    name: App version
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: latest
+
+    - name: Get version
+      uses: reecetech/version-increment@2023.4.1
+      id: version
+      with:
+        scheme: semver
+        increment: patch
+
+    - name: Set version
+      run: echo "version=${{ env.major }}.${{ env.minor }}.${{ steps.version.outputs.patch-version }}" >> $GITHUB_ENV
+
   build:
     name: Build Android
     runs-on: ubuntu-latest
-    needs: setup
+    needs: [setup, version]
 
     steps:
     - name: Checkout repository
@@ -51,15 +76,8 @@ jobs:
         path: ${{ env.path }}/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
 
-    - name: Get version
-      uses: reecetech/version-increment@2023.4.1
-      id: version
-      with:
-        scheme: semver
-        increment: patch
-
     - name: Set app version
-      run: cd ${{ env.path }} && npm pkg set version=${{ steps.version.outputs.version }}
+      run: cd ${{ env.path }} && npm pkg set version=${{ env.version }}
 
     - name: Build code
       run: cd ${{ env.path }} && npm run android:build
@@ -76,8 +94,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        release_name: Release ${{ steps.version.outputs.version }}
-        tag_name: ${{ steps.version.outputs.version }}
+        release_name: Release ${{ env.version }}
+        tag_name: ${{ env.version }}
         draft: false
         prerelease: false
 
