@@ -13,25 +13,20 @@ jobs:
     name: App version
     runs-on: ubuntu-latest
     outputs:
-      code: ${{ steps.version.outputs.patch-version }}
-      version: ${{ steps.app.outputs.value }}
+      code: ${{ steps.app_version.outputs.value }}
+      version: ${{ steps.app_code.outputs.value }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Install Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: latest
-
-    - name: Current package version
-      id: package_version
-      run: echo "::set-output name=value::$(cd ${{ env.path }} && npm pkg get version)"
+    - name: Set Code
+      id: app_code
+      run: echo "value=${{ github.run_number }}" >> $GITHUB_ENV
 
     - name: Set version
-      id: app
-      run: echo "version=${{ steps.package_version.outputs.value }}" >> $GITHUB_ENV
+      id: app_version
+      run: echo "value=${{ github.run_number }}" >> $GITHUB_ENV
 
   setup:
     name: Set up
