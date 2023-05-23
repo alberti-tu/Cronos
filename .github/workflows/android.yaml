@@ -1,12 +1,14 @@
 name: Deploy application
 
+env:
+  path: App
+
 on:
   push:
     branches:
       - main
-
-env:
-  path: App
+    paths:
+      - '${{ env.path }}/**'
 
 jobs:
   settings:
