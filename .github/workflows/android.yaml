@@ -43,7 +43,7 @@ jobs:
 
     - name: Set new version
       id: app
-      run: echo "value=${{ env.major }}.${{ env.minor }}.${{ steps.current_version.outputs.patch-version }}" >> "$GITHUB_OUTPUT"
+      run: echo "value=`./version_manager.sh ${{ steps.minimum_version.outputs.value }} ${{ steps.current_version.outputs.current-version }}`" >> "$GITHUB_OUTPUT"
 
   setup:
     name: Set up
