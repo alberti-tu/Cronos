@@ -21,16 +21,25 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: latest
+
     - name: Get last version
       uses: reecetech/version-increment@2023.4.1
-      id: version
+      id: current_version
       with:
         scheme: semver
         increment: patch
 
     - name: Set new version
+      id: version_manager
+      run: ./version_manager `npm pkg get version` ${{ steps.current_version.outputs.current-version }}
+
+    - name: Set new version
       id: app
-      run: echo "value=${{ env.major }}.${{ env.minor }}.${{ steps.version.outputs.patch-version }}" >> "$GITHUB_OUTPUT"
+      run: echo "value=${{ env.major }}.${{ env.minor }}.${{ steps.current_version.outputs.patch-version }}" >> "$GITHUB_OUTPUT"
 
   setup:
     name: Set up
