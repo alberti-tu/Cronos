@@ -35,7 +35,7 @@ jobs:
 
     - name: Set new version
       id: version_manager
-      run: ./version_manager `npm pkg get version` ${{ steps.current_version.outputs.current-version }}
+      run: ./version_manager `cd ${{ env.path }} && npm pkg get version` ${{ steps.current_version.outputs.current-version }}
 
     - name: Set new version
       id: app
