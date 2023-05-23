@@ -91,7 +91,7 @@ jobs:
       run: cd ${{ env.path }} && npm pkg set version=${{ needs.settings.outputs.version }}
 
     - name: Build code
-      run: cd ${{ env.path }} && npm run android:build
+      run: cd ${{ env.path }} && npm run android:build -- -PversionName=${{ needs.settings.outputs.version }} -PversionCode=${{ github.run_number }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
