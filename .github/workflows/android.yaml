@@ -26,7 +26,11 @@ jobs:
       with:
         node-version: latest
 
-    - name: Get last version
+    - name: Get minimum version
+      id: minimum_version
+      run: echo "value=`cd App && npm pkg get version`" >> "$GITHUB_OUTPUT"
+
+    - name: Get current version
       uses: reecetech/version-increment@2023.4.1
       id: current_version
       with:
@@ -35,7 +39,7 @@ jobs:
 
     - name: Set new version
       id: version_manager
-      run: ./version_manager.sh `cd ${{ env.path }} && npm pkg get version` ${{ steps.current_version.outputs.current-version }}
+      run: ./version_manager.sh ${{ steps.minimum_version.outputs.value }} ${{ steps.current_version.outputs.current-version }}
 
     - name: Set new version
       id: app
