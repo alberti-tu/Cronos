@@ -7,47 +7,13 @@ on:
 
 env:
   path: App
-  major: 1
-  minor: 0
 
 jobs:
-  settings:
-    name: App version
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.app.outputs.value }}
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Install Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: latest
-
-    - name: Get minimum version
-      id: minimum_version
-      run: echo "value=`cd App && npm pkg get version`" >> "$GITHUB_OUTPUT"
-
-    - name: Get current version
-      uses: reecetech/version-increment@2023.4.1
-      id: current_version
-      with:
-        scheme: semver
-        increment: patch
-
-    - name: Set new version
-      id: version_manager
-      run: ./version_manager.sh ${{ steps.minimum_version.outputs.value }} ${{ steps.current_version.outputs.current-version }}
-
-    - name: Set new version
-      id: app
-      run: echo "value=`./version_manager.sh ${{ steps.minimum_version.outputs.value }} ${{ steps.current_version.outputs.current-version }}`" >> "$GITHUB_OUTPUT"
-
   setup:
     name: Set up
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.app.outputs.value }}
 
     steps:
     - name: Checkout repository
@@ -65,12 +31,27 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{ env.path }}/node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
+        key: node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
+
+    - name: Get minimum version
+      id: minimum_version
+      run: echo "value=`cd App && npm pkg get version`" >> "$GITHUB_OUTPUT"
+
+    - name: Get current version
+      uses: reecetech/version-increment@2023.4.1
+      id: current_version
+      with:
+        scheme: semver
+        increment: patch
+
+    - name: Set new version
+      id: app
+      run: echo "value=`./version_manager.sh ${{ steps.minimum_version.outputs.value }} ${{ steps.current_version.outputs.current-version }}`" >> "$GITHUB_OUTPUT"
 
   android:
     name: Build Android
     runs-on: ubuntu-latest
-    needs: [settings, setup]
+    needs: setup
 
     steps:
     - name: Checkout repository
@@ -85,13 +66,13 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{ env.path }}/node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
+        key: node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
 
     - name: Set app version
-      run: cd ${{ env.path }} && npm pkg set version=${{ needs.settings.outputs.version }}
+      run: cd ${{ env.path }} && npm pkg set version=${{ needs.setup.outputs.version }}
 
     - name: Build code
-      run: cd ${{ env.path }} && npm run android:build -- -PversionName=${{ needs.settings.outputs.version }} -PversionCode=${{ github.run_number }}
+      run: cd ${{ env.path }} && npm run android:build -- -PversionName=${{ needs.setup.outputs.version }} -PversionCode=${{ github.run_number }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
@@ -102,7 +83,7 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: [settings, android]
+    needs: [setup, android]
 
     steps:
     - name: Download artifact
@@ -116,8 +97,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        release_name: Release ${{ needs.settings.outputs.version }}
-        tag_name: ${{ needs.settings.outputs.version }}
+        release_name: Release ${{ needs.setup.outputs.version }}
+        tag_name: ${{ needs.setup.outputs.version }}
         draft: false
         prerelease: false
 
@@ -128,5 +109,5 @@ jobs:
       with:
         upload_url: ${{ steps.release.outputs.upload_url }}
         asset_path: app-release.apk
-        asset_name: cronos-${{ needs.settings.outputs.version }}.apk
+        asset_name: cronos-${{ needs.setup.outputs.version }}.apk
         asset_content_type: octet-stream
