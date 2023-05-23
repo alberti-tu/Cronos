@@ -54,14 +54,16 @@ jobs:
       with:
         node-version: latest
 
-    - name: Install NPM dependencies
-      run: cd ${{ env.path }} && npm ci
-
     - name: Cache NPM dependencies
       uses: actions/cache@v3
+      id: cache-node
       with:
         path: ${{ env.path }}/node_modules
-        key: node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
+        key: node-${{ hashFiles('App/package-lock.json') }}
+
+    - name: Install dependencies
+      if: steps.cache-node.outputs.cache-hit != 'true'
+      run: cd ${{ env.path }} && npm ci
 
   android:
     name: Build Android
@@ -77,11 +79,11 @@ jobs:
       with:
         node-version: latest
 
-    - name: Cache NPM dependencies
+    - name: Cache node_modules
       uses: actions/cache@v3
       with:
         path: ${{ env.path }}/node_modules
-        key: node-${{ hashFiles('${{ env.path }}/package-lock.json') }}
+        key: node-${{ hashFiles('App/package-lock.json') }}
 
     - name: Set app version
       run: cd ${{ env.path }} && npm pkg set version=${{ needs.settings.outputs.version }}
