@@ -59,7 +59,7 @@ jobs:
       id: cache-node
       with:
         path: ${{ env.path }}/node_modules
-        key: node-${{ hashFiles(env.path + '/package-lock.json') }}
+        key: node-${{ hashFiles(join(env.path, '/package-lock.json')) }}
 
     - name: Install dependencies
       if: steps.cache-node.outputs.cache-hit != 'true'
@@ -83,7 +83,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{ env.path }}/node_modules
-        key: node-${{ hashFiles(env.path + '/package-lock.json') }}
+        key: node-${{ hashFiles(join(env.path, '/package-lock.json')) }}
 
     - name: Set app version
       run: cd ${{ env.path }} && npm pkg set version=${{ needs.settings.outputs.version }}
