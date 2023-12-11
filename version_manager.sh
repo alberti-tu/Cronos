@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ $# -ne 2 ]; then
-  echo "Uso: $0 <minimum_version> <current_version>"
+  echo "Execute: $0 <minimum_version> <current_version>"
   exit 1
 fi
 
