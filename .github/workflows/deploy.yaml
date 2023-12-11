@@ -90,7 +90,7 @@ jobs:
       run: cd ${{ env.path }} && npm pkg set version=${{ needs.settings.outputs.version }}
 
     - name: Build code
-      run: cd ${{ env.path }} && npm run android:build -- -PversionName=${{ needs.settings.outputs.version }} -PversionCode=${{ github.run_number }}
+      run: cd ${{ env.path }} && npm run android:release -- -PversionName=${{ needs.settings.outputs.version }} -PversionCode=${{ github.run_number }}
 
     - name: Set app file name
       run: mv ${{ env.path }}/android/app/build/outputs/apk/release/app-release.apk ./cronos-${{ needs.settings.outputs.version }}.apk
