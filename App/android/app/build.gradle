@@ -70,19 +70,16 @@ def getAppCode() {
 }
 
 android {
-    ndkVersion rootProject.ext.ndkVersion
-
-    compileSdkVersion rootProject.ext.compileSdkVersion
-
     namespace "com.alberti_tu.cronos"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
     defaultConfig {
         applicationId "com.alberti_tu.cronos"
-        minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion rootProject.ext.minSdkVersion
         versionName getAppVersion()
         versionCode getAppCode()
     }
-
     splits {
         abi {
             reset()
@@ -94,9 +91,15 @@ android {
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storePassword 'DebugPassword'
+            keyAlias 'debugKey'
+            keyPassword 'DebugPassword'
+        }
+        release {
+            storeFile file('release.keystore')
+            storePassword 'ReleasePassword'
+            keyAlias 'releaseKey'
+            keyPassword 'ReleasePassword'
         }
     }
     buildTypes {
@@ -105,7 +108,8 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.debug
+            applicationIdSuffix ".release"
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -125,14 +129,11 @@ android {
 
 dependencies {
     implementation("com.facebook.react:react-android")
-
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
-
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
-
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
