@@ -113,5 +113,6 @@ jobs:
         name: Release ${{ needs.settings.outputs.version }}
         tag_name: ${{ needs.settings.outputs.version }}
         token: ${{ secrets.GITHUB_TOKEN }}
+        generate_release_notes: false
         files: |
           **/*.apk
