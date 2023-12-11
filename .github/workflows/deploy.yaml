@@ -114,7 +114,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         name: Release ${{ needs.settings.outputs.version }}
-        body_path: release-notes.txt
+        body_path: ./release-notes.txt
         tag_name: ${{ needs.settings.outputs.version }}
         token: ${{ secrets.GITHUB_TOKEN }}
         files: |
