@@ -121,14 +121,11 @@ jobs:
         path: ${{ env.path }}/node_modules
         key: node-${{ hashFiles(join(env.path, '/package-lock.json')) }}
 
+    - name: Install Cocoapod dependencies
+      run: cd ${{ env.path }}/ios && pod install   
+
     - name: Set app version
       run: cd ${{ env.path }} && npm pkg set version=${{ needs.settings.outputs.version }}
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: ios
-        path: '**.ipa'
 
   release:
     name: Publish Release
@@ -148,3 +145,4 @@ jobs:
         fail_on_unmatched_files: false
         files: |
           **/*.apk
+          **/*.ipa
