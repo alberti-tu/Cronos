@@ -101,6 +101,35 @@ jobs:
         name: android
         path: '**.apk'
 
+  ios:
+    name: Build iPhone
+    runs-on: macos-latest
+    needs: [settings, setup]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: latest
+
+    - name: Cache node_modules
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.path }}/node_modules
+        key: node-${{ hashFiles(join(env.path, '/package-lock.json')) }}
+
+    - name: Set app version
+      run: cd ${{ env.path }} && npm pkg set version=${{ needs.settings.outputs.version }}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ios
+        path: '**.ipa'
+
   release:
     name: Publish Release
     runs-on: ubuntu-latest
