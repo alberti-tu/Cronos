@@ -57,6 +57,18 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
+def getAppVersion() {
+    def version = project.hasProperty('versionName') ? versionName : "1.0.0"
+    println "Version: $version"
+    return version
+}
+
+def getAppCode() {
+    def code = project.hasProperty('versionCode') ? versionCode.toInteger() : 1
+    println "Code: $code"
+    return code
+}
+
 android {
     namespace "com.alberti_tu.cronos"
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -65,8 +77,8 @@ android {
         applicationId "com.alberti_tu.cronos"
         targetSdkVersion rootProject.ext.targetSdkVersion
         minSdkVersion rootProject.ext.minSdkVersion
-        versionName project.hasProperty("versionName") ? versionName : "1.0.0"
-        versionCode project.hasProperty("versionCode") ? versionCode.toInteger() : 1
+        versionName getAppVersion()
+        versionCode getAppCode()
     }
     splits {
         abi {
