@@ -114,7 +114,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         name: Release ${{ needs.settings.outputs.version }}
-        body: ''
         tag_name: ${{ needs.settings.outputs.version }}
         token: ${{ secrets.GITHUB_TOKEN }}
         fail_on_unmatched_files: false
