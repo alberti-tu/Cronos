@@ -1,15 +1,15 @@
 name: Deploy application
 
+env:
+  path: App
+
 on:
   workflow_dispatch:
   push:
     branches:
       - main
     paths:
-      - 'App/**'
-
-env:
-  path: App
+      - '${{ env.path }}/**'
 
 jobs:
   settings:
