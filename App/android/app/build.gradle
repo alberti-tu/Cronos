@@ -58,13 +58,13 @@ def reactNativeArchitectures() {
 }
 
 def getAppVersion() {
-    def version = project.hasProperty('versionName') ? versionName : "1.0.0"
+    def version = project.hasProperty("versionName") ? versionName : "1.0.0"
     println "Version: $version"
     return version
 }
 
 def getAppCode() {
-    def code = project.hasProperty('versionCode') ? versionCode.toInteger() : 1
+    def code = project.hasProperty("versionCode") ? versionCode.toInteger() : 1
     println "Code: $code"
     return code
 }
