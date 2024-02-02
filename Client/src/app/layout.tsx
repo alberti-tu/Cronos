@@ -1,7 +1,21 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Cronos"
+  title: 'Cronos',
+  icons: [
+    {
+      rel: 'icon',
+      type: 'image/png',
+      url: '/cronos-light.png',
+      media: '(prefers-color-scheme: light)'
+    },
+    {
+      rel: 'icon',
+      type: 'image/png',
+      url: '/cronos-dark.png',
+      media: '(prefers-color-scheme: dark)'
+    }
+  ]
 }
 
 type RootProps = {
@@ -11,7 +25,9 @@ type RootProps = {
 function RootLayout({ children }: Readonly<RootProps>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+      </body>
     </html>
   )
 }
